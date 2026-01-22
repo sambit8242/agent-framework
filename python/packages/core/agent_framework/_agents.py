@@ -1216,11 +1216,19 @@ class ChatAgent(BaseAgent):
             await _log(level=level, data=f"Log level set to {level}")
 
         # Add convenience method for running the server with stdio transport
+        # Note: We attach this as an instance method rather than creating a wrapper class
+        # to maintain compatibility with the mcp.server.lowlevel.Server type while
+        # providing a simplified API for the common stdio use case.
         async def run_stdio() -> None:
             """Run the server using stdio transport.
 
             This is a convenience method that simplifies running the server with standard input/output.
-            It internally handles stream setup and initialization options.
+            It internally handles stream setup and initialization options, eliminating the need for
+            boilerplate code when starting an MCP server with stdio transport.
+
+            Example:
+                server = agent.as_mcp_server()
+                await server.run_stdio()  # Simple one-line startup
             """
             from mcp.server.stdio import stdio_server
 
@@ -1228,7 +1236,8 @@ class ChatAgent(BaseAgent):
                 await server.run(read_stream, write_stream, server.create_initialization_options())
 
         # Attach the convenience method to the server instance
-        server.run_stdio = run_stdio  # type: ignore
+        # Type ignore is used because we're dynamically adding a method to an external class instance
+        server.run_stdio = run_stdio  # type: ignore[attr-defined]
 
         return server
 

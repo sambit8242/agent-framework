@@ -581,7 +581,6 @@ async def test_chat_agent_mcp_server_run_stdio(chat_client: ChatClientProtocol) 
     assert inspect.iscoroutinefunction(server.run_stdio), "run_stdio should be an async function"
 
 
-
 async def test_chat_agent_run_with_mcp_tools(chat_client: ChatClientProtocol) -> None:
     """Test run method with MCP tools to cover MCP tool handling code."""
     agent = ChatAgent(chat_client=chat_client, name="TestAgent", description="Test agent")
