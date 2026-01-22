@@ -1215,6 +1215,21 @@ class ChatAgent(BaseAgent):
             # emit this log with the new minimum level
             await _log(level=level, data=f"Log level set to {level}")
 
+        # Add convenience method for running the server with stdio transport
+        async def run_stdio() -> None:
+            """Run the server using stdio transport.
+
+            This is a convenience method that simplifies running the server with standard input/output.
+            It internally handles stream setup and initialization options.
+            """
+            from mcp.server.stdio import stdio_server
+
+            async with stdio_server() as (read_stream, write_stream):
+                await server.run(read_stream, write_stream, server.create_initialization_options())
+
+        # Attach the convenience method to the server instance
+        server.run_stdio = run_stdio  # type: ignore
+
         return server
 
     async def _update_thread_with_type_and_conversation_id(
