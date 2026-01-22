@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft. All rights reserved.
 
-from typing import Annotated, Any
+from typing import Annotated
 
 import anyio
 from agent_framework.openai import OpenAIResponsesClient
@@ -57,14 +57,8 @@ async def run() -> None:
     # Expose the agent as an MCP server
     server = agent.as_mcp_server()
 
-    # Run server
-    from mcp.server.stdio import stdio_server
-
-    async def handle_stdin(stdin: Any | None = None, stdout: Any | None = None) -> None:
-        async with stdio_server() as (read_stream, write_stream):
-            await server.run(read_stream, write_stream, server.create_initialization_options())
-
-    await handle_stdin()
+    # Run server using stdio transport
+    await server.run_stdio()
 
 
 if __name__ == "__main__":
