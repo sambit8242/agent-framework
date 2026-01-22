@@ -564,6 +564,24 @@ async def test_chat_agent_as_mcp_server_basic(chat_client: ChatClientProtocol) -
     assert hasattr(server, "version")
 
 
+async def test_chat_agent_mcp_server_run_stdio(chat_client: ChatClientProtocol) -> None:
+    """Test that run_stdio convenience method is available on MCP server."""
+    agent = ChatAgent(chat_client=chat_client, name="TestAgent", description="Test agent for MCP")
+
+    # Create MCP server
+    server = agent.as_mcp_server()
+
+    # Verify run_stdio method is available
+    assert hasattr(server, "run_stdio"), "Server should have run_stdio convenience method"
+    assert callable(server.run_stdio), "run_stdio should be callable"
+
+    # Verify it's a coroutine function
+    import inspect
+
+    assert inspect.iscoroutinefunction(server.run_stdio), "run_stdio should be an async function"
+
+
+
 async def test_chat_agent_run_with_mcp_tools(chat_client: ChatClientProtocol) -> None:
     """Test run method with MCP tools to cover MCP tool handling code."""
     agent = ChatAgent(chat_client=chat_client, name="TestAgent", description="Test agent")
